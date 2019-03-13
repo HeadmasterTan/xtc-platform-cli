@@ -1,7 +1,7 @@
 {
     "name": "xtc-platform-cli",
     "version": "1.0.4",
-    "description": "小天才平台脚手架",
+    "description": "自用平台脚手架",
     "keywords": ["cli", "xtc-platform"],
     "bin": {
         "xtc-platform": "./bin/xtc-platform.js"

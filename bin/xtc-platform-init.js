@@ -1,29 +1,29 @@
 #!/usr/bin/env node
 
-const fs = require('fs')
-const glob = require('glob')
-const path = require('path')
-const chalk = require('chalk')
-const program = require('commander')
-const logSymbols = require('log-symbols')
+const fs = require('fs') // node自带的fs模块下的existsSync方法，用于检测路径是否存在。（会阻塞）
+const glob = require('glob') // node的glob模块允许你使用 *等符号， 来写一个glob规则，像在shell里一样，获取匹配对应规则的文件
+const path = require('path') // node自带的path模块，用于拼接路径
+const chalk = require('chalk') // 用于高亮终端打印出的信息
+const program = require('commander') // 命令行处理工具
+const logSymbols = require('log-symbols') // 在终端上显示 × 和 √
 
-const download = require('../lib/download')
-const generator = require('../lib/generator')
+const download = require('../lib/download') // 自定义工具-用于下载模板
+const generator = require('../lib/generator') // 自定义工具-用于渲染模板
 
-program.usage('<project-name>')
+program.usage('<project-name>') // project-name必填
 program.parse(process.argv) // 解析
 
 // 根据输入，获取项目名称
 let projectName = program.args[0]
 
-if (!projectName) { // project-name 必填
+if (!projectName) {
     // 相当于执行命令的--help选项，显示help信息，这是commander内置的一个命令选项
     program.help()
     return
 }
 
-const inquirer = require('inquirer')
-const list = glob.sync('*')
+const inquirer = require('inquirer') // 用于命令行与开发者交互
+const list = glob.sync('*') // 遍历当前目录
 
 let next = undefined
 if (list.length) {
@@ -36,15 +36,6 @@ if (list.length) {
         return
     }
     next = Promise.resolve(projectName)
-} else if (rootName === projectName) {
-    next = inquirer.prompt([{
-        name: 'buildInCurrent',
-        message: '当前目录为空，且目录名称和项目名称相同，是否直接在当前目录下创建新项目？',
-        type: 'confirm',
-        default: true
-    }]).then(answer => {
-        return Promise.resolve(answer.buildInCurrent ? '.' : projectName)
-    })
 } else {
     next = Promise.resolve(projectName)
 }
@@ -56,14 +47,14 @@ function go() {
         if (projectRoot !== '.') {
             fs.mkdirSync(projectRoot)
         }
-        return download(projectRoot).then(target => {
+        return download(projectRoot).then(target => { // 下载项目模板
             return {
                 name: projectRoot,
                 root: projectRoot,
                 downloadTemp: target.downloadTemp
             }
         })
-    }).then(context => {
+    }).then(context => { // 交互问答，配置项目信息
         return inquirer.prompt([{
             name: 'projectName',
             message: '项目名称',
@@ -85,7 +76,7 @@ function go() {
             }
         })
     }).then(context => {
-        return generator(context.metadata, context.downloadTemp)
+        return generator(context.metadata, context.downloadTemp) // 渲染项目模板
     }).then(context => {
         // 成功用绿色显示，给出积极的反馈
         console.log(logSymbols.success, chalk.green('项目模板构建完成。'))
