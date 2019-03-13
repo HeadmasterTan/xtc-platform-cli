@@ -1,0 +1,20 @@
+{
+    "name": "xtc-platform-cli",
+    "version": "1.0.4",
+    "description": "小天才平台脚手架",
+    "keywords": ["cli", "xtc-platform"],
+    "bin": {
+        "xtc-platform": "./bin/xtc-platform.js"
+    },
+    "dependencies": {
+        "chalk": "^2.4.2",
+        "commander": "^2.19.0",
+        "download-git-repo": "^1.1.0",
+        "glob": "^7.1.3",
+        "handlebars": "^4.1.0",
+        "inquirer": "^6.2.2",
+        "log-symbols": "^2.2.0",
+        "metalsmith": "^2.3.0",
+        "ora": "^3.2.0"
+    }
+}
